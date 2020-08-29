@@ -1,25 +1,26 @@
 import Link from 'next/link'
 
 const links = [
-  { href: 'https://github.com/vercel/next.js', label: 'GitHub' },
-  { href: 'https://nextjs.org/docs', label: 'Docs' },
+  { href: '/contact', label: 'Contact' },
 ]
 
 export default function Nav() {
   return (
-    <nav>
-      <ul className="flex justify-between items-center p-8">
+    <nav className="border-b-2 border-gray-300">
+      <ul className="flex items-center justify-between py-2">
         <li>
           <Link href="/">
-            <a className="text-blue-500 no-underline">Home</a>
+            <a className="text-4xl font-bold text-purple-500 no-underline">Xiiki</a>
           </Link>
         </li>
-        <ul className="flex justify-between items-center space-x-4">
+        <ul className="flex items-center justify-between space-x-4">
           {links.map(({ href, label }) => (
             <li key={`${href}${label}`}>
-              <a href={href} className="btn-blue no-underline">
-                {label}
-              </a>
+              <Link href={href}>
+                <button className="px-4 py-2 font-semibold text-gray-100 bg-purple-600 rounded hover:bg-purple-700">
+                  {label}
+                </button>
+              </Link>
             </li>
           ))}
         </ul>
