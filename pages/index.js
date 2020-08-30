@@ -4,48 +4,22 @@ import Nav from '../components/nav'
 import Result from '../components/result'
 import MCTForm from '../components/MctForm'
 
-import dayjs from 'dayjs'
+import dayjs from 'dayjs' 
 
-import absoluteUrl from 'next-absolute-url'
+const rootUrl = process.env.PROD == "true" ? process.env.PROD_ROOT : process.env.LOCAL_ROOT
 
-function originUrl(req) {
-  const localhostAddress = 'localhost:3000'
-  let host =
-  (req?.headers ? req.headers.host : '') || localhostAddress
-  let protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:'
-  
-  if (
-    req &&
-    req.headers['x-forwarded-host'] &&
-    typeof req.headers['x-forwarded-host'] === 'string'
-  ) {
-    host = req.headers['x-forwarded-host']
-  }
-
-  if (
-    req &&
-    req.headers['x-forwarded-proto'] &&
-    typeof req.headers['x-forwarded-proto'] === 'string'
-  ) {
-    protocol = `${req.headers['x-forwarded-proto']}:`
-  }
-
-  return protocol + '//' + host
-}
-
-export async function getStaticProps({ req }) {
-    const origin = originUrl(req)
-    const res = await fetch(origin + '/api/daily')
+export async function getStaticProps(context) {
+    const res = await fetch(rootUrl + "/api/daily")
     const json = await res.json()
     return {
       props: {
         data: json,
-        origin: origin
+        rootUrl
       }
     }
 }
 
-const Home = ({ data, origin }) => {
+const Home = ({ data, rootUrl }) => {
     const [results, setResults] = useState(data);   
 
     const onChange = (e) => {
@@ -54,7 +28,7 @@ const Home = ({ data, origin }) => {
     const getDataForPreviousDay = async () => {
       let currentDate = dayjs(results.date);
       let previousDayDate = currentDate.subtract(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-      const res = await fetch(origin + '/api/daily?date=' + previousDayDate)
+      const res = await fetch(rootUrl + '/api/daily?date=' + previousDayDate)
       const json = await res.json()
   
       setResults(json);
@@ -63,7 +37,7 @@ const Home = ({ data, origin }) => {
     const getDataForNextDay = async () => {
       let currentDate = dayjs(results.date);
       let nextDayDate = currentDate.add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-      const res = await fetch(origin + '/api/daily?date=' + nextDayDate)
+      const res = await fetch(rootUrl + '/api/daily?date=' + nextDayDate)
       const json = await res.json()
   
       setResults(json);
@@ -72,7 +46,7 @@ const Home = ({ data, origin }) => {
     const updateMacros = async () => {
         console.log("saving dude!!!!");
         console.log("results =>", results);
-        const res = await fetch(origin + '/api/daily', {
+        const res = await fetch(rootUrl + '/api/daily', {
           method: 'post',
           body: JSON.stringify(results)
         })
@@ -80,7 +54,7 @@ const Home = ({ data, origin }) => {
     
     return (
     <div>
-      <div>{origin==""?"empty origin" : origin}</div>
+      <div>{rootUrl}</div>
       <Head>
         <title>Home</title>
         <link rel="icon" href="/favicon.ico" />
