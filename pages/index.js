@@ -6,21 +6,46 @@ import MCTForm from '../components/MctForm'
 
 import dayjs from 'dayjs'
 
+import absoluteUrl from 'next-absolute-url'
+
+function originUrl(req) {
+  const localhostAddress = 'localhost:3000'
+  let host =
+  (req?.headers ? req.headers.host : '') || localhostAddress
+  let protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:'
+  
+  if (
+    req &&
+    req.headers['x-forwarded-host'] &&
+    typeof req.headers['x-forwarded-host'] === 'string'
+  ) {
+    host = req.headers['x-forwarded-host']
+  }
+
+  if (
+    req &&
+    req.headers['x-forwarded-proto'] &&
+    typeof req.headers['x-forwarded-proto'] === 'string'
+  ) {
+    protocol = `${req.headers['x-forwarded-proto']}:`
+  }
+
+  return protocol + '//' + host
+}
+
 export async function getStaticProps({ req }) {
-    const baseUrl = req ? `${req.protocol}://${req.get('Host')}` : ''
-    console.log(baseUrl) 
-    //const res = await fetch("http://localhost:3000/api/daily")
-    const res = await fetch('https://next_xiiki.vercel.app/api/daily')
+    const origin = originUrl(req)
+    const res = await fetch(origin + '/api/daily')
     const json = await res.json()
     return {
       props: {
         data: json,
-        baseUrl: baseUrl
+        origin: origin
       }
     }
 }
 
-const Home = ({ data, baseUrl }) => {
+const Home = ({ data, origin }) => {
     const [results, setResults] = useState(data);   
 
     const onChange = (e) => {
@@ -29,7 +54,7 @@ const Home = ({ data, baseUrl }) => {
     const getDataForPreviousDay = async () => {
       let currentDate = dayjs(results.date);
       let previousDayDate = currentDate.subtract(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-      const res = await fetch('https://next_xiiki.vercel.app/api/daily?date=' + previousDayDate)
+      const res = await fetch(origin + '/api/daily?date=' + previousDayDate)
       const json = await res.json()
   
       setResults(json);
@@ -38,7 +63,7 @@ const Home = ({ data, baseUrl }) => {
     const getDataForNextDay = async () => {
       let currentDate = dayjs(results.date);
       let nextDayDate = currentDate.add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-      const res = await fetch('https://next_xiiki.vercel.app/api/daily?date=' + nextDayDate)
+      const res = await fetch(origin + '/api/daily?date=' + nextDayDate)
       const json = await res.json()
   
       setResults(json);
@@ -47,7 +72,7 @@ const Home = ({ data, baseUrl }) => {
     const updateMacros = async () => {
         console.log("saving dude!!!!");
         console.log("results =>", results);
-        const res = await fetch('https://next_xiiki.vercel.app/api/daily', {
+        const res = await fetch(origin + '/api/daily', {
           method: 'post',
           body: JSON.stringify(results)
         })
@@ -55,7 +80,7 @@ const Home = ({ data, baseUrl }) => {
     
     return (
     <div>
-      <div>{baseUrl==""?"empty baseUrl" : baseUrl}</div>
+      <div>{origin==""?"empty origin" : origin}</div>
       <Head>
         <title>Home</title>
         <link rel="icon" href="/favicon.ico" />
