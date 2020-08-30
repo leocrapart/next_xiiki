@@ -9,7 +9,8 @@ import dayjs from 'dayjs'
 export async function getStaticProps({ req }) {
     const baseUrl = req ? `${req.protocol}://${req.get('Host')}` : ''
     console.log(baseUrl) 
-    const res = await fetch("http://localhost:3000/api/daily")
+    //const res = await fetch("http://localhost:3000/api/daily")
+    const res = await fetch(process.env.PROD_URL)
     const json = await res.json()
     return {
       props: {
@@ -28,7 +29,7 @@ const Home = ({ data, baseUrl }) => {
     const getDataForPreviousDay = async () => {
       let currentDate = dayjs(results.date);
       let previousDayDate = currentDate.subtract(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-      const res = await fetch('http://localhost:3000/api/daily?date=' + previousDayDate)
+      const res = await fetch(process.env.PROD_URL +'/api/daily?date=' + previousDayDate)
       const json = await res.json()
   
       setResults(json);
@@ -37,7 +38,7 @@ const Home = ({ data, baseUrl }) => {
     const getDataForNextDay = async () => {
       let currentDate = dayjs(results.date);
       let nextDayDate = currentDate.add(1, 'day').format('YYYY-MM-DDTHH:mm:ss')
-      const res = await fetch('http://localhost:3000/api/daily?date=' + nextDayDate)
+      const res = await fetch(process.env.PROD_URL +'/api/daily?date=' + nextDayDate)
       const json = await res.json()
   
       setResults(json);
@@ -46,7 +47,7 @@ const Home = ({ data, baseUrl }) => {
     const updateMacros = async () => {
         console.log("saving dude!!!!");
         console.log("results =>", results);
-        const res = await fetch('http://localhost:3000/api/daily', {
+        const res = await fetch(process.env.PROD_URL +'/api/daily', {
           method: 'post',
           body: JSON.stringify(results)
         })
