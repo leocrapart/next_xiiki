@@ -7,7 +7,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "dayjs": "^1.8.34",
+    "mongodb": "^3.6.0",
     "next": "latest",
+    "next-connect": "^0.8.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
