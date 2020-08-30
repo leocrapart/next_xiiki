@@ -4,9 +4,6 @@ import Tile from '../components/tile'
 const diamond = "https://images.unsplash.com/photo-1598705352140-be8e33a97d55?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1837&q=80"
 const woman = "https://images.unsplash.com/photo-1598690875075-0b8430676967?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=658&q=80"
 
-export async function getStaticProps(context) {
-  const res = await fetch()
-}
 
 export default function IndexPage() {
   return (
