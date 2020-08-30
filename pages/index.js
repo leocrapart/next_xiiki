@@ -10,7 +10,7 @@ export async function getStaticProps({ req }) {
     const baseUrl = req ? `${req.protocol}://${req.get('Host')}` : ''
     console.log(baseUrl) 
     //const res = await fetch("http://localhost:3000/api/daily")
-    const res = await fetch(process.env.PROD_URL)
+    const res = await fetch(process.env.PROD_URL + '/api/daily')
     const json = await res.json()
     return {
       props: {
